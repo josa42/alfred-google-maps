@@ -1,0 +1,14 @@
+hash: 116c7eab11a932adec7c76ad67765cff14e315c57511031854ef7a5f1870b9b9
+updated: 2018-08-08T12:06:36.438784+02:00
+imports:
+- name: github.com/deanishe/awgo
+  version: fda4e59dbe6936fed9f4864b8f45cd18ad2c933c
+  subpackages:
+  - fuzzy
+  - util
+- name: golang.org/x/text
+  version: 17ff2d5776d28fa6ba2280c1053f7adf8d32eea6
+  subpackages:
+  - transform
+  - unicode/norm
+testImports: []
