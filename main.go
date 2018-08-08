@@ -64,6 +64,12 @@ func run() {
 	}
 
 	if query == "" {
+
+		wf.NewItem("Google Maps").
+			Subtitle("Usage: \"gm [location]\" or \"gm [origin] > [target]\"").
+			Icon(icon).
+			Valid(false)
+
 		if wf.UpdateAvailable() {
 			wf.Configure(aw.SuppressUIDs(true))
 
