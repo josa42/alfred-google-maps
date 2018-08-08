@@ -2,33 +2,60 @@ package main
 
 // Package is called aw
 import (
+	"flag"
 	"fmt"
+	"log"
 	"net/url"
+	"os"
+	"os/exec"
 	"strings"
 
 	"github.com/deanishe/awgo"
+	"github.com/deanishe/awgo/update"
 )
 
-var wf *aw.Workflow
+const (
+	updateJobName = "checkForUpdate"
+	repo          = "josa42/alfred-google-maps"
+)
+
+var (
+	flagCheck     bool
+	wf            *aw.Workflow
+	iconAvailable = &aw.Icon{Value: "icon/update.png"}
+)
 
 func init() {
-	wf = aw.New()
+	wf = aw.New(update.GitHub(repo))
+
+	flag.BoolVar(&flagCheck, "check", false, "Check for a new version")
 }
 
 func run() {
-	query := strings.Split(strings.Join(wf.Args(), " "), ">")
-	icon := &aw.Icon{Value: "icon/icon-main.png"}
+	wf.Args()
+	flag.Parse()
+
+	if flagCheck {
+		runCheck()
+		return
+	}
+
+	runTriggerCheck()
+
+	query := strings.Trim(strings.Join(wf.Args(), " "), " ")
+	queryParts := strings.Split(query, ">")
+	icon := &aw.Icon{Value: "icon.png"}
 
 	start := ""
 	end := ""
 	waypoints := []string{}
 
-	for idx, item := range query {
+	for idx, item := range queryParts {
 		item = strings.Trim(item, " ")
 
 		if idx == 0 {
 			start = item
-		} else if idx == len(query)-1 {
+		} else if idx == len(queryParts)-1 {
 			end = item
 		} else {
 			waypoints = append(waypoints, item)
@@ -36,7 +63,17 @@ func run() {
 
 	}
 
-	if end == "" && len(waypoints) == 0 {
+	if query == "" {
+		if wf.UpdateAvailable() {
+			wf.Configure(aw.SuppressUIDs(true))
+
+			wf.NewItem("Update available!").
+				Subtitle("↩ to install").
+				Autocomplete("workflow:update").
+				Valid(false).
+				Icon(iconAvailable)
+		}
+	} else if end == "" && len(waypoints) == 0 {
 		wf.NewItem(start).
 			Subtitle("Search on Google Maps").
 			Icon(icon).
@@ -70,6 +107,25 @@ func run() {
 	}
 
 	wf.SendFeedback()
+}
+
+func runCheck() {
+	wf.Configure(aw.TextErrors(true))
+	log.Println("Checking for updates...")
+	if err := wf.CheckForUpdate(); err != nil {
+		wf.FatalError(err)
+	}
+}
+
+func runTriggerCheck() {
+	if wf.UpdateCheckDue() && !wf.IsRunning(updateJobName) {
+		log.Println("Running update check in background...")
+
+		cmd := exec.Command(os.Args[0], "-check")
+		if err := wf.RunInBackground(updateJobName, cmd); err != nil {
+			log.Printf("Error starting update check: %s", err)
+		}
+	}
 }
 
 func main() {
