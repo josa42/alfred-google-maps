@@ -15,7 +15,7 @@ Quickly open Gooogle Maps searches or directions in your default browser.
 
 ## Installation
 
-- Download the `.alfredworkflow` file from the [latest version](https://github.com/josa42/alfred-google-maps/releases/download/0.1.0/google-maps-0.1.0.alfredworkflow)
+- Download the `.alfredworkflow` file from the [latest version](https://github.com/josa42/alfred-google-maps/releases/download/0.1.1/google-maps-0.1.1.alfredworkflow)
 - Double click `.alfredworkflow` file to install the workflow
 
 ## Update
