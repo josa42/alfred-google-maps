@@ -10,7 +10,7 @@ import (
 	"os/exec"
 	"strings"
 
-	"github.com/deanishe/awgo"
+	aw "github.com/deanishe/awgo"
 	"github.com/deanishe/awgo/update"
 )
 
@@ -29,6 +29,10 @@ func init() {
 	wf = aw.New(update.GitHub(repo))
 
 	flag.BoolVar(&flagCheck, "check", false, "Check for a new version")
+}
+
+func main() {
+	wf.Run(run)
 }
 
 func run() {
@@ -132,8 +136,4 @@ func runTriggerCheck() {
 			log.Printf("Error starting update check: %s", err)
 		}
 	}
-}
-
-func main() {
-	wf.Run(run)
 }

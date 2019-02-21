@@ -10,6 +10,7 @@ fi
 rm -rf dist && mkdir dist
 
 # glide install
+dep ensure || exit 1
 go build main.go
 
 defaults write "$(pwd)/info.plist" version "${version}"

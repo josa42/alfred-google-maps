@@ -1,4 +1,0 @@
-package: github.com/josa42/alfred-google-maps
-import:
-- package: github.com/deanishe/awgo
-  version: ~0.15.0
